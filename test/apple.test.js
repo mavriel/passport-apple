@@ -100,6 +100,23 @@ describe('AppleStrategy', () => {
                 }).to.throw(TypeError, 'AppleStrategy requires a key option');
             });
         });
+
+        describe('with a invalid responseType option', function() {
+            it('should throw', function() {
+                expect(() => {
+                    new AppleStrategy(
+                        {
+                            clientID: 'CLIENT_ID',
+                            teamID: 'TEAM_ID',
+                            keyID: 'KEY_ID',
+                            key: 'KEY',
+                            responseType: 'invalidType'
+                        },
+                        () => {}
+                    );
+                }).to.throw(TypeError, 'AppleStrategy requires a valid responseType option("code" or "id_token")');
+            });
+        });
     });
 
     describe('authorization request with display parameter', function() {
@@ -129,6 +146,38 @@ describe('AppleStrategy', () => {
         it('should be redirected', function() {
             expect(url).to.equal(
                 'https://appleid.apple.com/auth/authorize?client_id=CLIENT_ID&response_type=code&response_mode=form_post'
+            );
+        });
+    });
+
+    describe('authorization request with display parameter and responseType', function() {
+        const strategy = new AppleStrategy(
+            {
+                clientID: 'CLIENT_ID',
+                teamID: 'TEAM_ID',
+                keyID: 'KEY_ID',
+                key: 'KEY',
+                responseType: 'id_token'
+            },
+            () => {}
+        );
+
+        let url;
+
+        before(function(done) {
+            chai.passport
+                .use(strategy)
+                .redirect(function(u) {
+                    url = u;
+                    done();
+                })
+                .req(() => {})
+                .authenticate();
+        });
+
+        it('should be redirected', function() {
+            expect(url).to.equal(
+                'https://appleid.apple.com/auth/authorize?client_id=CLIENT_ID&response_type=id_token&response_mode=form_post'
             );
         });
     });
