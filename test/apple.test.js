@@ -177,7 +177,7 @@ describe('AppleStrategy', () => {
 
         it('should be redirected', function() {
             expect(url).to.equal(
-                'https://appleid.apple.com/auth/authorize?client_id=CLIENT_ID&response_type=id_token&response_mode=form_post'
+                'https://appleid.apple.com/auth/authorize?client_id=CLIENT_ID&response_type=code%20id_token&response_mode=form_post'
             );
         });
     });
